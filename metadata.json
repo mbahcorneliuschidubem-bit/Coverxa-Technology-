@@ -1,0 +1,6 @@
+{
+  "name": "Corvexa Chemistry CBT",
+  "description": "JAMB UTME Chemistry computer-based practice platform covering 2000–2026 examinations with timed sessions, topic analytics, and detailed explanations.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

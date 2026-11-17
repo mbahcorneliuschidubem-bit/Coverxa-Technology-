@@ -1,0 +1,2140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Corvexa Chemistry CBT Engine 2.0</title>
+
+<meta name="description" content="Corvexa Chemistry CBT Practice Platform. Practice JAMB UTME Chemistry questions from 2000 to 2026.">
+
+<link rel="icon" type="image/png" href="logo.png">
+
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    background:#f1f5f9;
+    color:#1e293b;
+    transition:.3s;
+}
+
+.card{
+    background:white;
+    border:1px solid #e2e8f0;
+    border-radius:15px;
+}
+
+button{
+    transition:.2s;
+}
+
+button:disabled{
+    opacity:.4;
+    cursor:not-allowed;
+}
+
+.dark-mode{
+    background:#080f20;
+    color:#f8fafc;
+}
+
+.dark-mode .card{
+    background:#142137;
+    border-color:#263750;
+    color:#f8fafc;
+}
+
+.dark-mode h1,
+.dark-mode h2,
+.dark-mode h3,
+.dark-mode h4,
+.dark-mode p,
+.dark-mode span{
+    color:inherit;
+}
+
+.dark-mode .question-option{
+    background:#1e304a;
+    border-color:#344963;
+    color:white;
+}
+
+.dark-mode .question-option.selected{
+    background:#173c73;
+    border-color:#3b82f6;
+}
+
+.dark-mode .question-text{
+    color:white;
+}
+
+.dark-mode .light-panel{
+    background:#1e304a;
+    border-color:#344963;
+}
+
+.dark-mode .light-text{
+    color:#cbd5e1;
+}
+
+.dark-mode input{
+    background:#1e304a;
+    color:white;
+}
+
+.question-option{
+    width:100%;
+    text-align:left;
+    padding:15px;
+    border:2px solid #e2e8f0;
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    background:white;
+    margin-bottom:12px;
+    cursor:pointer;
+}
+
+.question-option:hover{
+    border-color:#3b82f6;
+}
+
+.question-option.selected{
+    background:#eff6ff;
+    border-color:#2563eb;
+}
+
+.option-label{
+    width:30px;
+    height:30px;
+    border-radius:50%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#e2e8f0;
+    font-weight:bold;
+    flex-shrink:0;
+}
+
+.selected .option-label{
+    background:#2563eb;
+    color:white;
+}
+
+.palette-button{
+    height:38px;
+    border-radius:7px;
+    font-weight:bold;
+    background:#e2e8f0;
+}
+
+.palette-button.answered{
+    background:#2563eb;
+    color:white;
+}
+
+.palette-button.flagged{
+    background:#facc15;
+    color:#111827;
+}
+
+.palette-button.current{
+    outline:3px solid #0f172a;
+}
+
+.dark-mode .palette-button.current{
+    outline-color:white;
+}
+
+.hidden{
+    display:none !important;
+}
+
+#timerDisplay{
+    font-variant-numeric:tabular-nums;
+}
+
+.danger-timer{
+    color:#dc2626 !important;
+    animation:pulse 1s infinite;
+}
+
+@keyframes pulse{
+    50%{opacity:.5;}
+}
+
+.progress-track{
+    height:9px;
+    background:#e2e8f0;
+    border-radius:20px;
+    overflow:hidden;
+}
+
+.progress-fill{
+    height:100%;
+    background:#2563eb;
+    transition:.3s;
+}
+
+@media(max-width:640px){
+
+    .mobile-stack{
+        flex-direction:column;
+        align-items:stretch;
+    }
+
+    .mobile-stack button{
+        width:100%;
+        margin-bottom:8px;
+    }
+
+}
+
+</style>
+</head>
+
+<body class="min-h-screen font-sans">
+
+<!-- HEADER -->
+
+<header class="bg-blue-950 text-white shadow-lg">
+
+<div class="max-w-7xl mx-auto px-4 py-5 flex justify-between items-center">
+
+<div class="flex items-center gap-3">
+
+<img src="logo.png"
+     alt="Corvexa Logo"
+     class="w-12 h-12 object-contain"
+     onerror="this.style.display='none'">
+
+<div>
+
+<h1 class="text-2xl font-extrabold tracking-wider">
+CORVEXA
+</h1>
+
+<p class="text-xs text-blue-200 tracking-widest">
+CHEMISTRY CBT ENGINE 2.0
+</p>
+
+</div>
+
+</div>
+
+<button id="themeToggle"
+class="bg-blue-800 px-4 py-2 rounded-lg">
+
+<i class="fas fa-moon"></i>
+<span id="themeText">Dark Mode</span>
+
+</button>
+
+</div>
+
+</header>
+
+
+<main class="max-w-7xl mx-auto px-4 py-7">
+
+
+<!-- DASHBOARD -->
+
+<section id="dashboardView">
+
+<div class="card p-6 mb-7">
+
+<h2 class="text-2xl font-bold text-blue-900 dark:text-white">
+
+JAMB UTME CHEMISTRY PRACTICE
+
+</h2>
+
+<p class="text-sm text-gray-500 light-text mt-2">
+
+Select an examination year to begin your 40-question Chemistry practice examination.
+
+</p>
+
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+
+<div class="light-panel bg-blue-50 p-4 rounded-xl">
+
+<h3 class="text-2xl font-bold text-blue-800">
+27
+</h3>
+
+<p class="text-sm light-text">
+Examination Years
+</p>
+
+</div>
+
+<div class="light-panel bg-green-50 p-4 rounded-xl">
+
+<h3 class="text-2xl font-bold text-green-700">
+40
+</h3>
+
+<p class="text-sm light-text">
+Questions Per Year
+</p>
+
+</div>
+
+<div class="light-panel bg-yellow-50 p-4 rounded-xl">
+
+<h3 class="text-2xl font-bold text-yellow-700">
+40 MIN
+</h3>
+
+<p class="text-sm light-text">
+Examination Duration
+</p>
+
+</div>
+
+<div class="light-panel bg-purple-50 p-4 rounded-xl">
+
+<h3 class="text-2xl font-bold text-purple-700">
+100%
+</h3>
+
+<p class="text-sm light-text">
+Maximum Practice Score
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="card p-6">
+
+<h3 class="font-bold text-xl mb-5">
+
+Select Examination Year
+
+</h3>
+
+<div id="yearGrid"
+class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-7 gap-3">
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- EXAMINATION -->
+
+<section id="examView" class="hidden">
+
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+
+
+<!-- QUESTION AREA -->
+
+<div class="lg:col-span-3">
+
+<div class="card p-6">
+
+<div class="flex justify-between items-center border-b pb-4 mb-5">
+
+<div>
+
+<span id="yearBadge"
+class="bg-blue-100 text-blue-800 px-3 py-1 rounded text-xs font-bold">
+
+YEAR 2000
+
+</span>
+
+<h2 id="questionTitle"
+class="font-bold text-xl mt-2">
+
+Question 1 of 40
+
+</h2>
+
+</div>
+
+<button id="flagBtn"
+class="text-yellow-600 font-semibold">
+
+<i class="fas fa-bookmark"></i>
+Flag
+
+</button>
+
+</div>
+
+
+<div class="mb-5">
+
+<div class="flex justify-between text-xs mb-2 light-text">
+
+<span>Examination Progress</span>
+
+<span id="progressText">1 / 40</span>
+
+</div>
+
+<div class="progress-track">
+
+<div id="progressFill"
+class="progress-fill"
+style="width:2.5%">
+
+</div>
+
+</div>
+
+</div>
+
+
+<div id="questionBody"
+class="question-text text-lg font-medium leading-relaxed mb-7">
+
+Loading question...
+
+</div>
+
+
+<div id="optionsContainer">
+
+</div>
+
+
+<div class="flex justify-between items-center mt-8 pt-5 border-t mobile-stack">
+
+<button id="prevBtn"
+class="bg-gray-200 text-gray-800 px-5 py-3 rounded-lg font-bold">
+
+<i class="fas fa-arrow-left"></i>
+Previous
+
+</button>
+
+
+<div class="flex gap-2">
+
+<button id="submitExamBtn"
+class="bg-red-600 text-white px-5 py-3 rounded-lg font-bold">
+
+Submit
+
+</button>
+
+<button id="nextBtn"
+class="bg-blue-600 text-white px-5 py-3 rounded-lg font-bold">
+
+Next
+<i class="fas fa-arrow-right"></i>
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- SIDEBAR -->
+
+<div class="lg:col-span-1">
+
+<div class="card p-5 sticky top-5">
+
+<div class="bg-blue-50 light-panel p-5 rounded-xl text-center mb-6">
+
+<p class="text-xs uppercase font-bold text-blue-700">
+
+Time Remaining
+
+</p>
+
+<h2 id="timerDisplay"
+class="text-4xl font-extrabold text-blue-900 mt-2">
+
+40:00
+
+</h2>
+
+</div>
+
+
+<h3 class="font-bold mb-4">
+
+Question Palette
+
+</h3>
+
+<div id="paletteGrid"
+class="grid grid-cols-5 gap-2">
+
+</div>
+
+
+<div class="mt-6 border-t pt-4 text-sm space-y-2">
+
+<p>
+<span class="inline-block w-3 h-3 bg-blue-600 rounded mr-2"></span>
+Answered
+</p>
+
+<p>
+<span class="inline-block w-3 h-3 bg-gray-300 rounded mr-2"></span>
+Unanswered
+</p>
+
+<p>
+<span class="inline-block w-3 h-3 bg-yellow-400 rounded mr-2"></span>
+Flagged
+</p>
+
+</div>
+
+<div class="mt-5 text-center">
+
+<p class="text-sm light-text">
+Answered Questions
+</p>
+
+<h2 id="answeredCount"
+class="text-2xl font-bold text-blue-600">
+
+0 / 40
+
+</h2>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- RESULTS -->
+
+<section id="resultView" class="hidden">
+
+<div class="card p-6">
+
+<div class="flex justify-between items-center flex-wrap gap-4 mb-7">
+
+<div>
+
+<h2 class="text-2xl font-extrabold">
+
+Performance Scorecard
+
+</h2>
+
+<p id="resultYearLabel"
+class="text-sm light-text mt-2">
+
+Examination Year
+
+</p>
+
+</div>
+
+<button id="restartBtn"
+class="bg-blue-600 text-white px-5 py-3 rounded-lg">
+
+Select Another Year
+
+</button>
+
+</div>
+
+
+<div class="grid md:grid-cols-2 gap-5 mb-8">
+
+<div class="bg-blue-50 light-panel rounded-xl p-7 text-center">
+
+<p class="text-sm font-bold text-blue-700">
+
+YOUR SCORE
+
+</p>
+
+<h1 id="finalScore"
+class="text-5xl font-extrabold text-blue-900 my-3">
+
+0 / 100
+
+</h1>
+
+<p id="accuracyPct"
+class="font-bold text-green-600">
+
+0% Accuracy
+
+</p>
+
+</div>
+
+
+<div class="bg-gray-50 light-panel rounded-xl p-7">
+
+<h3 class="font-bold mb-4">
+
+Examination Summary
+
+</h3>
+
+<div class="space-y-3">
+
+<p>
+Correct: <strong id="correctCount">0</strong>
+</p>
+
+<p>
+Incorrect: <strong id="incorrectCount">0</strong>
+</p>
+
+<p>
+Unanswered: <strong id="unansweredCount">0</strong>
+</p>
+
+<p>
+Total Questions: <strong>40</strong>
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+
+<h3 class="font-bold text-xl mb-4">
+
+Topic Performance Analytics
+
+</h3>
+
+<div id="analyticsContainer"
+class="space-y-4 mb-8">
+
+</div>
+
+
+<h3 class="font-bold text-xl mb-5">
+
+Detailed Question Review
+
+</h3>
+
+<div id="reviewContainer"
+class="space-y-4">
+
+</div>
+
+
+<div class="mt-8 flex flex-wrap gap-3">
+
+<button id="exportBtn"
+class="bg-green-600 text-white px-5 py-3 rounded-lg">
+
+<i class="fas fa-download"></i>
+Download Scorecard
+
+</button>
+
+<button id="restartBtn2"
+class="bg-blue-600 text-white px-5 py-3 rounded-lg">
+
+New Examination
+
+</button>
+
+</div>
+
+</div>
+
+</section>
+
+</main>
+
+
+<footer class="text-center py-7 mt-10 border-t text-sm text-gray-500">
+
+<p>
+© 2026 Corvexa Academic Solutions.
+</p>
+
+<p class="mt-1">
+Learn. Practice. Improve. Excel.
+</p>
+
+</footer>
+
+
+<script>
+
+// ======================================
+// CORVEXA CBT ENGINE 2.0
+// ======================================
+
+let selectedYear = 2000;
+let currentQuestionIdx = 0;
+
+let questions = [];
+
+let userAnswers = {};
+let flaggedQuestions = {};
+
+let timerInterval;
+let timeRemaining = 2400;
+
+let lastScoreData = {};
+
+const TOTAL_QUESTIONS = 40;
+
+
+// ======================================
+// SEEDED RANDOM GENERATOR
+// ======================================
+
+function seededRandom(seed){
+
+    let value = seed;
+
+    return function(){
+
+        value = (value * 9301 + 49297) % 233280;
+
+        return value / 233280;
+
+    };
+
+}
+
+
+// ======================================
+// QUESTION CREATION
+// ======================================
+
+function createQuestion(topic,text,options,correct,explanation){
+
+    return {
+
+        topic,
+        text,
+        options,
+        correct,
+        explanation
+
+    };
+
+}
+
+
+// ======================================
+// QUESTION BANK
+// ======================================
+
+function generateYearQuestions(year){
+
+    const random = seededRandom(year);
+
+    const rand = (min,max)=>{
+
+        return Math.floor(random()*(max-min+1))+min;
+
+    };
+
+    const questions = [];
+
+    function add(q){
+
+        questions.push(q);
+
+    }
+
+
+    // 1. STOICHIOMETRY
+
+    let concentration = rand(10,40);
+
+    add(createQuestion(
+
+        "Stoichiometry",
+
+        `Calculate the mass of sodium hydroxide required to prepare 500 cm³ of a ${concentration} g/dm³ solution.`,
+
+        [
+
+            `${concentration/2} g`,
+
+            `${concentration} g`,
+
+            `${concentration*2} g`,
+
+            `${concentration/4} g`
+
+        ],
+
+        0,
+
+        `Volume = 500/1000 = 0.5 dm³. Mass = concentration × volume = ${concentration} × 0.5 = ${concentration/2} g.`
+
+    ));
+
+
+    // 2. GAS LAWS
+
+    let temp = rand(20,50);
+
+    let gasVolume = rand(200,500);
+
+    let finalVolume = Math.round(gasVolume*273/(273+temp));
+
+    add(createQuestion(
+
+        "Gas Laws",
+
+        `A gas occupies ${gasVolume} cm³ at ${temp}°C. Calculate its volume at 0°C if pressure remains constant.`,
+
+        [
+
+            `${finalVolume} cm³`,
+
+            `${gasVolume} cm³`,
+
+            `${gasVolume+50} cm³`,
+
+            `${finalVolume+30} cm³`
+
+        ],
+
+        0,
+
+        `Charles's law: V₁/T₁ = V₂/T₂. V₂ = ${gasVolume} × 273 / ${273+temp} = approximately ${finalVolume} cm³.`
+
+    ));
+
+
+    // 3. ATOMIC STRUCTURE
+
+    let atomicNumber = rand(3,20);
+
+    add(createQuestion(
+
+        "Atomic Structure",
+
+        `An atom has atomic number ${atomicNumber}. What does its atomic number represent?`,
+
+        [
+
+            "Number of protons",
+
+            "Number of neutrons",
+
+            "Number of electron shells",
+
+            "Mass number"
+
+        ],
+
+        0,
+
+        "Atomic number is the number of protons in the nucleus of an atom."
+
+    ));
+
+
+    // 4. PERIODIC TABLE
+
+    const elements = [
+
+        ["Lithium","Group 1"],
+
+        ["Beryllium","Group 2"],
+
+        ["Boron","Group 13"],
+
+        ["Carbon","Group 14"],
+
+        ["Nitrogen","Group 15"],
+
+        ["Oxygen","Group 16"],
+
+        ["Fluorine","Group 17"],
+
+        ["Neon","Group 18"]
+
+    ];
+
+    let element = elements[rand(0,elements.length-1)];
+
+    add(createQuestion(
+
+        "Periodic Table",
+
+        `In which group of the periodic table is ${element[0]} found?`,
+
+        [
+
+            element[1],
+
+            "Group 1",
+
+            "Group 7",
+
+            "Group 18"
+
+        ].filter((v,i,a)=>a.indexOf(v)===i).concat(
+
+            ["Group 3","Group 4","Group 5","Group 6","Group 8","Group 10"]
+
+        ).slice(0,4),
+
+        0,
+
+        `${element[0]} belongs to ${element[1]} of the periodic table.`
+
+    ));
+
+
+    // 5. ORGANIC CHEMISTRY
+
+    const carbon = rand(2,8);
+
+    add(createQuestion(
+
+        "Organic Chemistry",
+
+        `What is the molecular formula of an alkene containing ${carbon} carbon atoms?`,
+
+        [
+
+            `C${carbon}H${carbon*2}`,
+
+            `C${carbon}H${carbon*2+2}`,
+
+            `C${carbon}H${carbon*2-2}`,
+
+            `C${carbon}H${carbon}`
+
+        ],
+
+        0,
+
+        "The general molecular formula of an acyclic alkene with one double bond is CₙH₂ₙ."
+
+    ));
+
+
+    // 6. ELECTROCHEMISTRY
+
+    let current = rand(1,5);
+
+    let depositedMass = ((current*1800*63.5)/(96500*2)).toFixed(2);
+
+    add(createQuestion(
+
+        "Electrochemistry",
+
+        `A current of ${current} A passes through copper(II) sulphate solution for 30 minutes. Calculate the mass of copper deposited. [Cu = 63.5, F = 96500 C mol⁻¹]`,
+
+        [
+
+            `${depositedMass} g`,
+
+            `${(depositedMass*2).toFixed(2)} g`,
+
+            `${(depositedMass/2).toFixed(2)} g`,
+
+            `${(depositedMass*3).toFixed(2)} g`
+
+        ],
+
+        0,
+
+        "Using Faraday's law: m = ItM/(nF). Copper requires two electrons per atom."
+
+    ));
+
+
+    // 7. ACIDS AND BASES
+
+    add(createQuestion(
+
+        "Acids, Bases and Salts",
+
+        "Which salt produces an alkaline solution when dissolved in water?",
+
+        [
+
+            "Sodium ethanoate",
+
+            "Ammonium chloride",
+
+            "Sodium chloride",
+
+            "Potassium nitrate"
+
+        ],
+
+        0,
+
+        "Sodium ethanoate is formed from a weak acid and a strong base. Its anion undergoes hydrolysis to produce an alkaline solution."
+
+    ));
+
+
+    // 8. CHEMICAL EQUILIBRIUM
+
+    add(createQuestion(
+
+        "Chemical Equilibrium",
+
+        "What happens when an inert gas is added to a gaseous equilibrium system at constant volume and temperature?",
+
+        [
+
+            "The equilibrium position remains unchanged",
+
+            "The equilibrium shifts to the right",
+
+            "The equilibrium shifts to the left",
+
+            "All reactants are consumed"
+
+        ],
+
+        0,
+
+        "At constant volume, the partial pressures of reacting gases remain unchanged."
+
+    ));
+
+
+    // 9. ENERGETICS
+
+    let heat = rand(10,100);
+
+    add(createQuestion(
+
+        "Energetics",
+
+        `A reaction releases ${heat} kJ of heat to its surroundings. What is the sign of its enthalpy change?`,
+
+        [
+
+            `-${heat} kJ`,
+
+            `+${heat} kJ`,
+
+            "Zero",
+
+            `+${heat*2} kJ`
+
+        ],
+
+        0,
+
+        "An exothermic reaction releases heat, so its enthalpy change is negative."
+
+    ));
+
+
+    // 10. REACTION RATES
+
+    add(createQuestion(
+
+        "Rates of Reaction",
+
+        "Which of the following generally increases the rate of a chemical reaction?",
+
+        [
+
+            "Increasing temperature",
+
+            "Reducing reactant concentration",
+
+            "Removing a catalyst",
+
+            "Reducing the surface area of a solid reactant"
+
+        ],
+
+        0,
+
+        "Increasing temperature generally increases the kinetic energy and frequency of effective collisions."
+
+    ));
+
+
+    // 11. NON-METALS
+
+    add(createQuestion(
+
+        "Non-Metals",
+
+        "Which non-metal is used in the manufacture of sulphuric acid?",
+
+        [
+
+            "Sulphur",
+
+            "Sodium",
+
+            "Calcium",
+
+            "Iron"
+
+        ],
+
+        0,
+
+        "Sulphur is burned to produce sulphur dioxide, which is used in the Contact Process."
+
+    ));
+
+
+    // 12. METALS
+
+    add(createQuestion(
+
+        "Metals and Alloys",
+
+        "Which metal is commonly extracted from bauxite?",
+
+        [
+
+            "Aluminium",
+
+            "Iron",
+
+            "Copper",
+
+            "Zinc"
+
+        ],
+
+        0,
+
+        "Bauxite is the principal ore of aluminium."
+
+    ));
+
+
+    // 13. NUCLEAR CHEMISTRY
+
+    let halfLife = rand(2,10);
+
+    add(createQuestion(
+
+        "Nuclear Chemistry",
+
+        `A radioactive substance has a half-life of ${halfLife} days. What fraction remains after ${halfLife*2} days?`,
+
+        [
+
+            "1/4",
+
+            "1/2",
+
+            "1/8",
+
+            "3/4"
+
+        ],
+
+        0,
+
+        "After two half-lives, the remaining fraction is (1/2)² = 1/4."
+
+    ));
+
+
+    // 14. QUALITATIVE ANALYSIS
+
+    add(createQuestion(
+
+        "Qualitative Analysis",
+
+        "Which gas turns limewater milky?",
+
+        [
+
+            "Carbon dioxide",
+
+            "Oxygen",
+
+            "Hydrogen",
+
+            "Nitrogen"
+
+        ],
+
+        0,
+
+        "Carbon dioxide reacts with calcium hydroxide to form insoluble calcium carbonate."
+
+    ));
+
+
+    // 15. CHEMICAL BONDING
+
+    add(createQuestion(
+
+        "Chemical Bonding",
+
+        "What type of bond is formed by the transfer of electrons from one atom to another?",
+
+        [
+
+            "Ionic bond",
+
+            "Covalent bond",
+
+            "Metallic bond",
+
+            "Hydrogen bond"
+
+        ],
+
+        0,
+
+        "An ionic bond results from electrostatic attraction between oppositely charged ions."
+
+    ));
+
+
+    // 16. WATER
+
+    add(createQuestion(
+
+        "Water Chemistry",
+
+        "Which substance is commonly used to remove temporary hardness of water?",
+
+        [
+
+            "Slaked lime",
+
+            "Sodium chloride",
+
+            "Ethanol",
+
+            "Hydrogen gas"
+
+        ],
+
+        0,
+
+        "Temporary hardness can be removed by boiling or by suitable lime treatment."
+
+    ));
+
+
+    // 17. OXIDATION AND REDUCTION
+
+    add(createQuestion(
+
+        "Redox Reactions",
+
+        "Oxidation is defined in terms of electrons as:",
+
+        [
+
+            "Loss of electrons",
+
+            "Gain of electrons",
+
+            "Gain of neutrons",
+
+            "Loss of protons"
+
+        ],
+
+        0,
+
+        "Oxidation involves the loss of electrons."
+
+    ));
+
+
+    // 18. ENVIRONMENTAL CHEMISTRY
+
+    add(createQuestion(
+
+        "Environmental Chemistry",
+
+        "Which gas is a major contributor to the greenhouse effect?",
+
+        [
+
+            "Carbon dioxide",
+
+            "Helium",
+
+            "Neon",
+
+            "Argon"
+
+        ],
+
+        0,
+
+        "Carbon dioxide absorbs infrared radiation and contributes to global warming."
+
+    ));
+
+
+    // 19. SEPARATION TECHNIQUES
+
+    add(createQuestion(
+
+        "Separation Techniques",
+
+        "Which method is most suitable for separating ethanol from water?",
+
+        [
+
+            "Fractional distillation",
+
+            "Filtration",
+
+            "Decantation",
+
+            "Magnetic separation"
+
+        ],
+
+        0,
+
+        "Fractional distillation separates miscible liquids with different boiling points."
+
+    ));
+
+
+    // 20. CHEMICAL FORMULAE
+
+    add(createQuestion(
+
+        "Chemical Formulae",
+
+        "What is the chemical formula of calcium carbonate?",
+
+        [
+
+            "CaCO₃",
+
+            "CaCl₂",
+
+            "CaSO₄",
+
+            "CaO"
+
+        ],
+
+        0,
+
+        "Calcium carbonate consists of calcium ions and carbonate ions."
+
+    ));
+
+
+    // ADDITIONAL QUESTIONS
+
+    const additional = [
+
+        ["Atomic Structure","Which subatomic particle has a negative charge?",["Electron","Proton","Neutron","Nucleus"],0,"Electrons carry a negative charge."],
+
+        ["Organic Chemistry","Which functional group characterizes alcohols?",["–OH","–COOH","–CHO","–CO–"],0,"Alcohols contain the hydroxyl functional group."],
+
+        ["Gas Laws","What is the SI unit of pressure?",["Pascal","Joule","Newton","Watt"],0,"Pressure is measured in pascals."],
+
+        ["Acids, Bases and Salts","What is the pH of a neutral solution at 25°C?",["7","1","14","5"],0,"A neutral solution at 25°C has pH 7."],
+
+        ["Chemical Bonding","Which molecule has a triple bond?",["N₂","H₂","Cl₂","H₂O"],0,"Nitrogen molecules contain a triple covalent bond."],
+
+        ["Periodic Table","Elements in the same group generally have the same number of:",["Valence electrons","Neutrons","Electron shells","Protons"],0,"Main-group elements in the same group have the same number of valence electrons."],
+
+        ["Electrochemistry","Oxidation takes place at which electrode?",["Anode","Cathode","Salt bridge","Electrolyte"],0,"Oxidation always occurs at the anode."],
+
+        ["Metals and Alloys","Which metal is liquid at ordinary room temperature?",["Mercury","Iron","Copper","Aluminium"],0,"Mercury is liquid at ordinary room temperature."],
+
+        ["Energetics","A reaction that absorbs heat is described as:",["Endothermic","Exothermic","Neutral","Catalytic"],0,"An endothermic reaction absorbs heat."],
+
+        ["Rates of Reaction","A catalyst increases reaction rate by:",["Lowering activation energy","Increasing product mass","Changing equilibrium constant","Increasing atomic number"],0,"A catalyst provides an alternative pathway with lower activation energy."],
+
+        ["Qualitative Analysis","Which reagent is commonly used to test for chloride ions?",["Silver nitrate solution","Sodium hydroxide solution","Ethanol","Distilled water"],0,"Silver ions form a white precipitate of silver chloride with chloride ions."],
+
+        ["Nuclear Chemistry","Which radiation has the greatest penetrating power among alpha, beta and gamma?",["Gamma","Alpha","Beta","All are equal"],0,"Gamma radiation has the greatest penetrating power."],
+
+        ["Organic Chemistry","What is the general formula of an acyclic alkane?",["CₙH₂ₙ₊₂","CₙH₂ₙ","CₙH₂ₙ₋₂","CₙHₙ"],0,"Alkanes follow the general formula CₙH₂ₙ₊₂."],
+
+        ["Water Chemistry","Which process converts water vapour into liquid water?",["Condensation","Evaporation","Sublimation","Melting"],0,"Condensation is the change from gas to liquid."],
+
+        ["Environmental Chemistry","Acid rain is mainly associated with emissions of:",["Sulphur dioxide and nitrogen oxides","Oxygen and hydrogen","Helium and neon","Argon and nitrogen"],0,"Sulphur dioxide and nitrogen oxides form acids in atmospheric moisture."],
+
+        ["Separation Techniques","Which technique separates an insoluble solid from a liquid?",["Filtration","Distillation","Chromatography","Sublimation"],0,"Filtration separates an insoluble solid from a liquid."],
+
+        ["Stoichiometry","What is the relative molecular mass of water? [H=1, O=16]",["18","16","17","20"],0,"Mr of H₂O = 2(1) + 16 = 18."],
+
+        ["Chemical Equilibrium","A catalyst changes the time required to reach equilibrium but does not change:",["The equilibrium constant","The reaction temperature","The initial concentration","The number of atoms"],0,"A catalyst does not change the equilibrium constant at a fixed temperature."],
+
+        ["Non-Metals","Which allotrope of carbon conducts electricity?",["Graphite","Diamond","Charcoal","Coke"],0,"Graphite has delocalized electrons that can conduct electricity."],
+
+        ["Chemical Formulae","What is the formula of ammonia?",["NH₃","NO₂","N₂O","NH₄"],0,"Ammonia contains one nitrogen atom and three hydrogen atoms."]
+
+    ];
+
+
+    additional.forEach((q,index)=>{
+
+        add(createQuestion(
+
+            q[0],
+
+            `(${year} Practice) ${q[1]}`,
+
+            q[2],
+
+            q[3],
+
+            q[4]
+
+        ));
+
+    });
+
+
+    // CREATE 40 QUESTIONS
+
+    const unique = questions.slice(0,40);
+
+    // Shuffle question order using the year seed.
+
+    for(let i=unique.length-1;i>0;i--){
+
+        const j=rand(0,i);
+
+        [unique[i],unique[j]]=[unique[j],unique[i]];
+
+    }
+
+
+    // Shuffle answer options and update correct answers.
+
+    unique.forEach(q=>{
+
+        const correctAnswer=q.options[q.correct];
+
+        for(let i=q.options.length-1;i>0;i--){
+
+            const j=rand(0,i);
+
+            [q.options[i],q.options[j]]=[q.options[j],q.options[i]];
+
+        }
+
+        q.correct=q.options.indexOf(correctAnswer);
+
+    });
+
+
+    return unique.map((q,index)=>({
+
+        ...q,
+
+        id:index+1
+
+    }));
+
+}
+
+
+// ======================================
+// DASHBOARD
+// ======================================
+
+function initDashboard(){
+
+    const grid=document.getElementById("yearGrid");
+
+    grid.innerHTML="";
+
+    for(let year=2000;year<=2026;year++){
+
+        const btn=document.createElement("button");
+
+        btn.textContent=year;
+
+        btn.className="bg-blue-50 text-blue-900 border border-blue-200 rounded-lg p-4 font-bold hover:bg-blue-600 hover:text-white";
+
+        btn.onclick=()=>startExam(year);
+
+        grid.appendChild(btn);
+
+    }
+
+}
+
+
+// ======================================
+// START EXAMINATION
+// ======================================
+
+function startExam(year){
+
+    selectedYear=year;
+
+    questions=generateYearQuestions(year);
+
+    currentQuestionIdx=0;
+
+    userAnswers={};
+
+    flaggedQuestions={};
+
+    timeRemaining=2400;
+
+    document.getElementById("dashboardView").classList.add("hidden");
+
+    document.getElementById("resultView").classList.add("hidden");
+
+    document.getElementById("examView").classList.remove("hidden");
+
+    document.getElementById("yearBadge").textContent="YEAR "+year;
+
+    renderPalette();
+
+    loadQuestion(0);
+
+    startTimer();
+
+}
+
+
+// ======================================
+// QUESTION PALETTE
+// ======================================
+
+function renderPalette(){
+
+    const grid=document.getElementById("paletteGrid");
+
+    grid.innerHTML="";
+
+    for(let i=0;i<TOTAL_QUESTIONS;i++){
+
+        const btn=document.createElement("button");
+
+        btn.textContent=i+1;
+
+        btn.className="palette-button";
+
+        btn.onclick=()=>loadQuestion(i);
+
+        btn.id="palette-"+i;
+
+        grid.appendChild(btn);
+
+    }
+
+    updatePalette();
+
+}
+
+
+function updatePalette(){
+
+    for(let i=0;i<TOTAL_QUESTIONS;i++){
+
+        const btn=document.getElementById("palette-"+i);
+
+        if(!btn)continue;
+
+        btn.className="palette-button";
+
+        if(flaggedQuestions[i]){
+
+            btn.classList.add("flagged");
+
+        }else if(userAnswers[i]!==undefined){
+
+            btn.classList.add("answered");
+
+        }
+
+        if(i===currentQuestionIdx){
+
+            btn.classList.add("current");
+
+        }
+
+    }
+
+    const answered=Object.keys(userAnswers).length;
+
+    document.getElementById("answeredCount").textContent=
+
+    `${answered} / 40`;
+
+}
+
+
+// ======================================
+// LOAD QUESTION
+// ======================================
+
+function loadQuestion(index){
+
+    if(index<0||index>=questions.length)return;
+
+    currentQuestionIdx=index;
+
+    const q=questions[index];
+
+    document.getElementById("questionTitle").textContent=
+
+    `Question ${index+1} of 40 — ${q.topic}`;
+
+    document.getElementById("questionBody").textContent=q.text;
+
+    document.getElementById("progressText").textContent=
+
+    `${index+1} / 40`;
+
+    document.getElementById("progressFill").style.width=
+
+    `${((index+1)/40)*100}%`;
+
+
+    const container=document.getElementById("optionsContainer");
+
+    container.innerHTML="";
+
+    const labels=["A","B","C","D"];
+
+    q.options.forEach((option,i)=>{
+
+        const btn=document.createElement("button");
+
+        btn.className="question-option";
+
+        if(userAnswers[index]===i){
+
+            btn.classList.add("selected");
+
+        }
+
+        const label=document.createElement("span");
+
+        label.className="option-label";
+
+        label.textContent=labels[i];
+
+        const text=document.createElement("span");
+
+        text.textContent=option;
+
+        btn.append(label,text);
+
+        btn.onclick=()=>selectOption(i);
+
+        container.appendChild(btn);
+
+    });
+
+
+    document.getElementById("flagText")||
+
+    document.getElementById("flagBtn");
+
+    document.getElementById("flagBtn").innerHTML=
+
+    flaggedQuestions[index]?
+
+    '<i class="fas fa-bookmark"></i> Flagged':
+
+    '<i class="far fa-bookmark"></i> Flag';
+
+
+    document.getElementById("prevBtn").disabled=index===0;
+
+    document.getElementById("nextBtn").disabled=
+
+    index===TOTAL_QUESTIONS-1;
+
+    updatePalette();
+
+}
+
+
+// ======================================
+// ANSWER SELECTION
+// ======================================
+
+function selectOption(index){
+
+    userAnswers[currentQuestionIdx]=index;
+
+    loadQuestion(currentQuestionIdx);
+
+}
+
+
+// ======================================
+// FLAG QUESTIONS
+// ======================================
+
+document.getElementById("flagBtn").onclick=()=>{
+
+    flaggedQuestions[currentQuestionIdx]=
+
+    !flaggedQuestions[currentQuestionIdx];
+
+    loadQuestion(currentQuestionIdx);
+
+};
+
+
+// ======================================
+// NAVIGATION
+// ======================================
+
+document.getElementById("prevBtn").onclick=()=>{
+
+    loadQuestion(currentQuestionIdx-1);
+
+};
+
+document.getElementById("nextBtn").onclick=()=>{
+
+    loadQuestion(currentQuestionIdx+1);
+
+};
+
+
+// ======================================
+// TIMER
+// ======================================
+
+function startTimer(){
+
+    clearInterval(timerInterval);
+
+    timerInterval=setInterval(()=>{
+
+        timeRemaining--;
+
+        if(timeRemaining<0){
+
+            timeRemaining=0;
+
+        }
+
+        const mins=Math.floor(timeRemaining/60);
+
+        const secs=timeRemaining%60;
+
+        const display=document.getElementById("timerDisplay");
+
+        display.textContent=
+
+        `${String(mins).padStart(2,"0")}:${String(secs).padStart(2,"0")}`;
+
+        if(timeRemaining<=300){
+
+            display.classList.add("danger-timer");
+
+        }
+
+        if(timeRemaining===0){
+
+            clearInterval(timerInterval);
+
+            alert("Your examination time has ended. Your answers will be submitted.");
+
+            submitExam();
+
+        }
+
+    },1000);
+
+}
+
+
+// ======================================
+// SUBMIT EXAMINATION
+// ======================================
+
+document.getElementById("submitExamBtn").onclick=()=>{
+
+    const unanswered=TOTAL_QUESTIONS-
+
+    Object.keys(userAnswers).length;
+
+    let message="Are you sure you want to submit your examination?";
+
+    if(unanswered>0){
+
+        message+=`\n\nYou have ${unanswered} unanswered questions.`;
+
+    }
+
+    if(confirm(message)){
+
+        submitExam();
+
+    }
+
+};
+
+
+function submitExam(){
+
+    clearInterval(timerInterval);
+
+    let correct=0;
+
+    let topicStats={};
+
+    const review=document.getElementById("reviewContainer");
+
+    review.innerHTML="";
+
+
+    questions.forEach((q,index)=>{
+
+        const answer=userAnswers[index];
+
+        const isCorrect=answer===q.correct;
+
+        if(isCorrect)correct++;
+
+        if(!topicStats[q.topic]){
+
+            topicStats[q.topic]={total:0,correct:0};
+
+        }
+
+        topicStats[q.topic].total++;
+
+        if(isCorrect){
+
+            topicStats[q.topic].correct++;
+
+        }
+
+
+        const card=document.createElement("div");
+
+        card.className="card p-5";
+
+
+        const heading=document.createElement("h4");
+
+        heading.className="font-bold mb-3";
+
+        heading.textContent=
+
+        `Question ${index+1} — ${isCorrect?"CORRECT":"INCORRECT"}`;
+
+        heading.style.color=isCorrect?"#16a34a":"#dc2626";
+
+
+        const question=document.createElement("p");
+
+        question.className="mb-3";
+
+        question.textContent=q.text;
+
+
+        const yourAnswer=document.createElement("p");
+
+        yourAnswer.className="text-sm mb-2";
+
+        yourAnswer.textContent=
+
+        "Your Answer: "+
+
+        (answer===undefined?"Unanswered":q.options[answer]);
+
+
+        const correctAnswer=document.createElement("p");
+
+        correctAnswer.className="text-sm font-bold text-green-600 mb-3";
+
+        correctAnswer.textContent=
+
+        "Correct Answer: "+q.options[q.correct];
+
+
+        const explanation=document.createElement("div");
+
+        explanation.className="bg-blue-50 light-panel p-3 rounded text-sm";
+
+        explanation.textContent="Explanation: "+q.explanation;
+
+
+        card.append(
+
+            heading,
+
+            question,
+
+            yourAnswer,
+
+            correctAnswer,
+
+            explanation
+
+        );
+
+        review.appendChild(card);
+
+    });
+
+
+    const percentage=Math.round(correct/40*100);
+
+    const unanswered=40-Object.keys(userAnswers).length;
+
+    document.getElementById("finalScore").textContent=
+
+    `${percentage} / 100`;
+
+    document.getElementById("accuracyPct").textContent=
+
+    `${percentage}% Accuracy`;
+
+    document.getElementById("correctCount").textContent=correct;
+
+    document.getElementById("incorrectCount").textContent=
+
+    40-unanswered-correct;
+
+    document.getElementById("unansweredCount").textContent=unanswered;
+
+    document.getElementById("resultYearLabel").textContent=
+
+    `Examination Year: ${selectedYear}`;
+
+
+    lastScoreData={
+
+        year:selectedYear,
+
+        score:percentage,
+
+        correct,
+
+        incorrect:40-unanswered-correct,
+
+        unanswered,
+
+        date:new Date().toLocaleString()
+
+    };
+
+
+    renderAnalytics(topicStats);
+
+
+    document.getElementById("examView").classList.add("hidden");
+
+    document.getElementById("resultView").classList.remove("hidden");
+
+}
+
+
+// ======================================
+// TOPIC ANALYTICS
+// ======================================
+
+function renderAnalytics(stats){
+
+    const container=document.getElementById("analyticsContainer");
+
+    container.innerHTML="";
+
+    Object.keys(stats).forEach(topic=>{
+
+        const data=stats[topic];
+
+        const percentage=Math.round(
+
+            data.correct/data.total*100
+
+        );
+
+
+        const box=document.createElement("div");
+
+        box.className="mb-4";
+
+
+        const title=document.createElement("div");
+
+        title.className="flex justify-between text-sm font-semibold mb-2";
+
+        title.innerHTML=
+
+        `<span></span><span>${data.correct}/${data.total} (${percentage}%)</span>`;
+
+        title.children[0].textContent=topic;
+
+
+        const track=document.createElement("div");
+
+        track.className="progress-track";
+
+
+        const fill=document.createElement("div");
+
+        fill.className="progress-fill";
+
+        fill.style.width=percentage+"%";
+
+
+        track.appendChild(fill);
+
+        box.append(title,track);
+
+        container.appendChild(box);
+
+    });
+
+}
+
+
+// ======================================
+// EXPORT SCORECARD
+// ======================================
+
+document.getElementById("exportBtn").onclick=()=>{
+
+    const report=`
+
+========================================
+
+CORVEXA CHEMISTRY CBT ENGINE 2.0
+
+========================================
+
+Examination Year: ${lastScoreData.year}
+
+Final Score: ${lastScoreData.score}/100
+
+Correct Answers: ${lastScoreData.correct}/40
+
+Incorrect Answers: ${lastScoreData.incorrect}/40
+
+Unanswered Questions: ${lastScoreData.unanswered}
+
+Accuracy: ${lastScoreData.score}%
+
+Date: ${lastScoreData.date}
+
+========================================
+
+CORVEXA ACADEMIC SOLUTIONS
+
+Learn. Practice. Improve. Excel.
+
+========================================
+
+`;
+
+
+    const blob=new Blob([report],{
+
+        type:"text/plain"
+
+    });
+
+    const url=URL.createObjectURL(blob);
+
+    const a=document.createElement("a");
+
+    a.href=url;
+
+    a.download=
+
+    `Corvexa_Chemistry_${lastScoreData.year}_Scorecard.txt`;
+
+    a.click();
+
+    URL.revokeObjectURL(url);
+
+};
+
+
+// ======================================
+// RESTART
+// ======================================
+
+function restart(){
+
+    clearInterval(timerInterval);
+
+    document.getElementById("resultView").classList.add("hidden");
+
+    document.getElementById("examView").classList.add("hidden");
+
+    document.getElementById("dashboardView").classList.remove("hidden");
+
+}
+
+document.getElementById("restartBtn").onclick=restart;
+
+document.getElementById("restartBtn2").onclick=restart;
+
+
+// ======================================
+// DARK MODE
+// ======================================
+
+document.getElementById("themeToggle").onclick=()=>{
+
+    document.body.classList.toggle("dark-mode");
+
+    const dark=document.body.classList.contains("dark-mode");
+
+    document.getElementById("themeText").textContent=
+
+    dark?"Light Mode":"Dark Mode";
+
+};
+
+
+// ======================================
+// INITIALIZE
+// ======================================
+
+initDashboard();
+
+</script>
+
+</body>
+</html>
